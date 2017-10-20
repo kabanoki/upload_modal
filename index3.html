@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>タブを表示</title>
+    <link rel="stylesheet" href="./common/bower_components/bootstrap/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div id="main-content">
+    <button class="btn btn-default" type="button" v-on:click="showModal()">
+        ファイルアップロード
+    </button>
+    <div class="textarea">
+        <textarea class="mytextarea"></textarea>
+    </div>
+
+
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">ファイルアップロード</h4>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation"class="active"><a href="#uplode" aria-controls="profile" role="tab" data-toggle="tab">アップロード</a></li>
+                        <li role="presentation" >
+                            <a href="#home" aria-controls="home" role="tab" data-toggle="tab">ファイル一覧</a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="uplode">
+                            A
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="home">
+                            B
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="./common/bower_components/vue/dist/vue.js"></script>
+<script src="./common/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="./common/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="./common/bower_components/tinymce/tinymce.js"></script>
+
+<script>
+    $(function(){
+        /**
+         *
+         * tinymce
+         */
+        tinymce.init({
+            selector: '.mytextarea',
+            body_id: 'mce-blog',
+            plugins: [
+                'advlist autolink lists link image hr anchor',
+                'searchreplace wordcount visualblocks visualchars',
+                'nonbreaking table contextmenu',
+                'paste textcolor colorpicker textpattern'
+            ],
+            toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | link image | forecolor backcolor',
+            image_advtab: true,
+            relative_urls : false,
+            document_base_url :  '/',
+            content_style: "#mce-blog {width: 950px}"
+        });
+    });
+
+    MEDIA = new Vue({
+        el: '#main-content',
+        data: {
+
+        },
+        methods:{
+            showModal: function(){
+                $('#myModal').modal('show');
+            },
+        }
+    });
+</script>
+</body>
+</html>

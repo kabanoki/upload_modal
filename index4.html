@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dropzoneを表示</title>
+    <link rel="stylesheet" href="./common/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./common/bower_components/dropzone/dist/dropzone.css">
+    <link rel="stylesheet" href="./common/bower_components/dropzone/dist/basic.css">
+    <style>
+        /* model */
+        .tab-content .tab-pane{
+            min-height: 600px;
+        }
+
+        /* model-dropzoon */
+        .tab-content .tab-pane form{
+            min-height: 600px;
+            border: 2px dashed #2e6da4;
+        }
+        div#uplode form#my-dropzone div.dz-message {
+            margin-top: 30%;
+        }
+        .dz-message span{
+            font-weight: bold;
+        }
+        .dz-drag-hover{
+            background-color: #7acaff;
+        }
+
+        /* modal-mediabox */
+        .media-box{
+            max-height: 615px;
+            min-height: 615px;
+            overflow: auto;
+        }
+        .media-box h3.media-datatime{
+            clear: both;
+            padding-top: 20px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #000;
+        }
+        .media-box .media-list {
+            margin: 10px;
+            padding: 5px;
+            text-align: center;
+            cursor: pointer;
+            min-width: 140px;
+        }
+        .media-box .media-list .img-box{
+            border: 1px solid #ddd;
+            height: 120px;
+            padding: 10px;
+        }
+        .media-box .media-list.media-checked .img-box{
+            border: 2px solid #0000ff;
+        }
+        .media-list .img-box img{
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .media-detail{
+            border-left: 1px solid #ddd;
+            max-height: 615px;
+            min-height: 615px;
+            overflow: auto;
+            background-color: #f3f3f3;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="main-content">
+    <button class="btn btn-default" type="button" v-on:click="showModal()">
+        ファイルアップロード
+    </button>
+    <div class="textarea">
+        <textarea class="mytextarea"></textarea>
+    </div>
+
+
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">ファイルアップロード</h4>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation"class="active"><a href="#uplode" aria-controls="profile" role="tab" data-toggle="tab">アップロード</a></li>
+                        <li role="presentation" >
+                            <a href="#home" aria-controls="home" role="tab" data-toggle="tab">ファイル一覧</a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="uplode">
+                            <form id="my-dropzone" action="./common/file/test.json" class="dropzone" >
+                                <div  class="fallback">
+                                    <input name="file" type="file" multiple />
+                                </div>
+                            </form>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="home">
+                            <div class="media-box col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div  v-for="item, index in getMediaItems"
+                                      v-bind:class="[selectMediaItem.no == item.no ? 'media-list col-lg-2 col-md-2 col-sm-2 col-xs-2 media-checked':'media-list col-lg-2 col-md-2 col-sm-2 col-xs-2']"
+                                      v-on:click="checked(item)"
+                                >
+                                    <div class="img-box" v-bind:data-media_id="item.no" >
+                                        <img
+                                                v-bind:src="item.path"
+                                                v-bind:alt="item.client_name"
+                                                v-bind:data-path="item.path"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="./common/bower_components/vue/dist/vue.js"></script>
+<script src="./common/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="./common/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="./common/bower_components/tinymce/tinymce.js"></script>
+<script src="./common/bower_components/dropzone/dist/dropzone.js"></script>
+
+<script>
+    Dropzone.options.myAwesomeDropzone = false;
+    Dropzone.autoDiscover = false;
+
+    var mediaNo = 0;
+
+    $(function(){
+        /**
+         *
+         * tinymce
+         */
+        tinymce.init({
+            selector: '.mytextarea',
+            body_id: 'mce-blog',
+            plugins: [
+                'advlist autolink lists link image hr anchor',
+                'searchreplace wordcount visualblocks visualchars',
+                'nonbreaking table contextmenu',
+                'paste textcolor colorpicker textpattern'
+            ],
+            toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | link image | forecolor backcolor',
+            image_advtab: true,
+            relative_urls : false,
+            document_base_url :  '/',
+            content_style: "#mce-blog {width: 950px}"
+        });
+
+        /**
+         * dropzone
+         */
+        var myDropzone = new Dropzone("#my-dropzone",{
+            dictDefaultMessage : 'ファイルをドロップでアップロードします。',
+            renameFilename: function(file_name){
+                return file_name;
+            },
+            acceptedFiles : 'image/*' +
+            ', application/pdf' +
+            ', application/excel' +
+            ', application/vnd.ms-excel' +
+            ', application/msexcel' +
+            ', application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' +
+            ', application/msword' +
+            ', application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            dictInvalidFileType : '選択されたファイルは許可されていない形式です。'
+        });
+
+        myDropzone.on("success", function(file, res) {
+            // 本来は、res にはサーバーからのレスポンスが反映される
+            var res = {
+                "no": mediaNo,
+                "name": file.name,
+                "client_name": file.name,
+                "path": file.dataURL,
+            };
+
+            MEDIA.addMedia(res);
+
+            mediaNo = mediaNo +1;
+        });
+    });
+
+    var MEDIA = new Vue({
+        el: '#main-content',
+        data: {
+            mediaItems: [],
+            selectMediaItem: '',
+            selectMediaItemTitle:'',
+            selectMediaItemUrl:'',
+        },
+        methods:{
+            showModal: function(){
+                $('#myModal').modal('show');
+            },
+            addMedia: function(item){
+                this.mediaItems.unshift(item);
+            },
+        },
+        computed:{
+            getMediaItems: {
+                get: function () {
+                    return this.mediaItems;
+                },
+                set: function (v) {
+                    this.items = v;
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
