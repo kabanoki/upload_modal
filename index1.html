@@ -7,9 +7,36 @@
 
 </head>
 <body>
+<div class="textarea">
+    <textarea class="mytextarea"></textarea>
+</div>
 
 <script src="./common/manage/bower_components/vue/dist/vue.js"></script>
 <script src="./common/manage/bower_components/jquery/dist/jquery.min.js"></script>
 <script src="./common/manage/bower_components/tinymce/tinymce.js"></script>
+
+<script>
+    $(function(){
+        /**
+         *
+         * tinymce
+         */
+        tinymce.init({
+            selector: '.mytextarea',
+            body_id: 'mce-blog',
+            plugins: [
+                'advlist autolink lists link image hr anchor',
+                'searchreplace wordcount visualblocks visualchars',
+                'nonbreaking table contextmenu',
+                'paste textcolor colorpicker textpattern'
+            ],
+            toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | link image | forecolor backcolor',
+            image_advtab: true,
+            relative_urls : false,
+            document_base_url :  '/',
+            content_style: "#mce-blog {width: 950px}"
+        });
+    });
+</script>
 </body>
 </html>
